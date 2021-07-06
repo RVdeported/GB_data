@@ -26,20 +26,27 @@ def save_repo_list(response, filename = "Repos.json"):
 def print_repo_list(response):
     return [n["name"] for n in response.json()]
 
+def get_repos_pipe(username=USERNAME, filename="Repos.json"):
+    response = get_repos(username)
+    
+    if response is None:
+        return False
+    
+    save_repo_list(response)
+    print(print_repo_list(response))
 
-response = get_repos(USERNAME)
-save_repo_list(response)
-print(print_repo_list(response))
+if __name__ == "__main__":
+    get_repos_pipe()
 
 #------------------Task 2---------------------
 
-def get_cur_temp(city):
-    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_KEY}'
+def get_cur_temp(city, key=WEATHER_KEY):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={key}'
     
     respond = requests.get(url=url)
     
     if respond.status_code != 200:
-        print("Request not succsessful. Check the city entered.")
+        print("Request not succsessful. Check the city or key entered.")
         print(respond.content)
         return None
     return respond.json()
