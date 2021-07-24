@@ -69,6 +69,7 @@ def get_info_from_page(html):
     return res
 
 
+
 def get_salary_from_item(hh_span):
     salary={
         "min_sal": "Not stated",
@@ -79,21 +80,15 @@ def get_salary_from_item(hh_span):
 
     text = hh_span.text
     if text[0:2] == "от":
-        id1 = text.find("т")+2
-        id2 = text.find("р")-1
-        text = text[id1:id2].replace("\u202f", "")
-        salary["min_sal"] = int(text)
+        salary["min_sal"] = get_only_nums(text)
 
     elif text[0:2] == "до":
-        id1 = text.find("д") + 2
-        id2 = text.find("р") - 1
-        text = text[id1:id2].replace("\u202f", "")
-        salary["min_sal"] = int(text)
+        salary["min_sal"] = get_only_nums(text)
 
     else:
         text = text.replace("\u202f","")
-        salary["min_sal"] = int(text[:text.find(" – ")])
-        salary["max_sal"] = int(text[text.find(" – ") + 3: text.find(" руб")])
+        salary["min_sal"] = get_only_nums(text[:text.find(" – ")])
+        salary["max_sal"] = get_only_nums(text[text.find(" – ") + 3:])
 
     return salary
 
@@ -114,6 +109,15 @@ def get_info_from_hh(url, header, input = "Аналитик"):
         out += get_info_from_page(page)
         page = get_page_next(page, header)
     return out
+
+#-------------- Utils -----------------------
+
+def get_only_nums(string):
+    out = ""
+    for n in string:
+        if n.isdigit():
+            out += n
+    return int(out)
 
 if __name__ == "__main__":
     input = "Внутренний аудитор"
